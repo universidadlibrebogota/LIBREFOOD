@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LibreFood</title>
+  <style>
+    :root {
+      --amber-50: #fffbeb;
+      --orange-50: #fff7ed;
+      --orange-100: #ffedd5;
+      --orange-500: #f97316;
+      --orange-600: #ea580c;
+      --red-500: #ef4444;
+      --green-500: #22c55e;
+      --blue-500: #3b82f6;
+      --indigo-500: #6366f1;
+      --purple-500: #a855f7;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --white: #ffffff;
+      --shadow: 0 16px 40px rgba(17, 24, 39, .12);
+      --soft-shadow: 0 10px 24px rgba(17, 24, 39, .10);
+      --radius-xl: 18px;
+      --radius-2xl: 24px;
+      --radius-3xl: 32px;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: linear-gradient(135deg, var(--amber-50), var(--orange-100)); }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--gray-900);
+      background: linear-gradient(135deg, var(--amber-50), var(--orange-100));
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease, opacity .18s ease;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:active:not(:disabled) { transform: translateY(0); }
+    button:disabled { cursor: not-allowed; opacity: .52; }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--amber-50), var(--orange-100));
+    }
+
+    .phone {
+      width: min(100%, 480px);
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      min-height: 100vh;
+      padding: 22px 18px 28px;
+    }
+
+    .center-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 18px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--soft-shadow);
+      border: 1px solid rgba(255, 255, 255, .8);
+    }
+
+    .welcome-card {
+      width: 100%;
+      max-width: 390px;
+      padding: 34px 24px;
+      border-radius: var(--radius-3xl);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .logo {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 44px;
+      background: linear-gradient(135deg, var(--orange-500), var(--red-500));
+      box-shadow: 0 18px 35px rgba(249, 115, 22, .28);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1;
+      color: var(--gray-800);
+      font-weight: 850;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--gray-500);
+      font-size: 15px;
+    }
+
+    .stack { display: grid; gap: 12px; }
+    .mt-6 { margin-top: 24px; }
+    .mt-4 { margin-top: 16px; }
+    .mt-3 { margin-top: 12px; }
+    .mb-3 { margin-bottom: 12px; }
+
+    .btn {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      font-weight: 800;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--orange-500), var(--red-500));
+      box-shadow: 0 10px 20px rgba(249, 115, 22, .24);
+    }
+
+    .btn-secondary {
+      color: var(--orange-600);
+      background: white;
+      border: 2px solid var(--orange-500);
+    }
+
+    .btn-muted {
+      color: var(--gray-700);
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+    }
+
+    .btn-blue { color: white; background: linear-gradient(135deg, #2563eb, #3b82f6); }
+    .btn-green { color: white; background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .btn-red { color: white; background: linear-gradient(135deg, #dc2626, #ef4444); }
+    .btn-purple { color: white; background: linear-gradient(135deg, #7c3aed, #a855f7); }
+    .btn-dark { color: white; background: var(--gray-800); }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: var(--gray-800);
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 8px 18px rgba(17, 24, 39, .08);
+      font-size: 20px;
+    }
+
+    .topbar h1 {
+      flex: 1;
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.12;
+      color: var(--gray-900);
+    }
+
+    .form-card {
+      padding: 24px 18px;
+      border-radius: var(--radius-3xl);
+    }
+
+    label {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--gray-700);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 48px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 15px;
+      background: white;
+      color: var(--gray-900);
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--orange-500);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, .13);
+    }
+
+    .link-btn {
+      width: auto;
+      min-height: auto;
+      padding: 0;
+      border-radius: 0;
+      color: #2563eb;
+      background: transparent;
+      font-weight: 800;
+    }
+
+    .orange-link { color: var(--orange-600); }
+    .gray-link { color: var(--gray-500); }
+    .center { text-align: center; }
+    .error { color: #dc2626; font-size: 13px; font-weight: 700; }
+    .success { color: #16a34a; font-size: 13px; font-weight: 700; }
+    .hint { color: var(--gray-500); font-size: 13px; line-height: 1.4; }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .role-card {
+      min-height: 86px;
+      border: 1.5px solid var(--gray-200);
+      background: white;
+      color: var(--gray-800);
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      padding: 10px;
+      font-weight: 850;
+    }
+
+    .role-card .emoji { font-size: 28px; }
+    .role-card.selected {
+      border-color: var(--orange-500);
+      background: var(--orange-50);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, .12);
+    }
+
+    .main-screen {
+      background: var(--gray-900);
+      color: white;
+      min-height: 100vh;
+    }
+
+    .profile-hero {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .10);
+      border-radius: 24px;
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--orange-500), var(--red-500));
+      color: white;
+      font-size: 30px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, .2);
+    }
+
+    .profile-hero h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      min-height: 26px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .badge-orange { background: #ffedd5; color: #c2410c; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-yellow { background: #fef3c7; color: #a16207; }
+    .badge-gray { background: #f3f4f6; color: #4b5563; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+
+    .news-card {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--orange-500), var(--red-500));
+      color: white;
+      box-shadow: 0 14px 28px rgba(249, 115, 22, .22);
+      overflow: hidden;
+    }
+
+    .news-content {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 80px;
+    }
+
+    .news-emoji { font-size: 42px; }
+    .news-card h3 { margin: 0 0 5px; font-size: 18px; }
+    .news-card p { margin: 0; font-size: 13px; line-height: 1.35; opacity: .95; }
+
+    .progress-track {
+      height: 5px;
+      margin-top: 14px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .25);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: white;
+    }
+
+    .dots {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .45);
+      padding: 0;
+      min-height: auto;
+    }
+
+    .dot.active { width: 22px; background: white; }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .menu-tile {
+      min-height: 128px;
+      color: white;
+      border-radius: 22px;
+      padding: 16px;
+      text-align: left;
+      box-shadow: 0 14px 24px rgba(0, 0, 0, .16);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .menu-tile .tile-icon { font-size: 32px; }
+    .menu-tile strong { display: block; font-size: 16px; line-height: 1.15; }
+    .menu-tile span { display: block; margin-top: 5px; font-size: 12px; line-height: 1.25; opacity: .92; }
+
+    .grad-products { background: linear-gradient(135deg, #f97316, #f59e0b); }
+    .grad-map { background: linear-gradient(135deg, #78716c, #f59e0b); }
+    .grad-history { background: linear-gradient(135deg, #f97316, #ef4444); }
+    .grad-blue { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .grad-purple { background: linear-gradient(135deg, #7c3aed, #c084fc); }
+    .grad-green { background: linear-gradient(135deg, #16a34a, #4ade80); }
+    .grad-admin { background: linear-gradient(135deg, #4f46e5, #9333ea); }
+
+    .bottom-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .cafeteria-card, .product-card, .order-card, .user-card, .request-card {
+      padding: 15px;
+      border-radius: 22px;
+      background: white;
+      border: 1px solid rgba(229, 231, 235, .8);
+      box-shadow: 0 8px 18px rgba(17, 24, 39, .07);
+    }
+
+    .cafeteria-card {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gray-900);
+    }
+
+    .round-icon {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--orange-500), var(--red-500));
+      color: white;
+      font-size: 21px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .space-between { justify-content: space-between; }
+    .wrap { flex-wrap: wrap; }
+    .grow { flex: 1; min-width: 0; }
+
+    .product-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+    }
+
+    .product-emoji {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--orange-50);
+      font-size: 34px;
+    }
+
+    .product-card h3, .order-card h3, .request-card h3, .user-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .price {
+      color: var(--orange-600);
+      font-weight: 900;
+    }
+
+    .chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .screen-title {
+      color: var(--gray-900);
+      margin: 0 0 6px;
+      font-size: 27px;
+      line-height: 1.08;
+    }
+
+    .banner {
+      padding: 12px 14px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .banner-orange { background: #ffedd5; color: #c2410c; }
+    .banner-blue { background: #dbeafe; color: #1d4ed8; }
+    .banner-green { background: #dcfce7; color: #15803d; }
+
+    .map-box {
+      position: relative;
+      height: 430px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, transparent 31%, rgba(107, 114, 128, .65) 31%, rgba(107, 114, 128, .65) 34%, transparent 34%),
+        linear-gradient(90deg, transparent 64%, rgba(107, 114, 128, .58) 64%, rgba(107, 114, 128, .58) 67%, transparent 67%),
+        linear-gradient(0deg, transparent 31%, rgba(107, 114, 128, .58) 31%, rgba(107, 114, 128, .58) 34%, transparent 34%),
+        linear-gradient(0deg, transparent 64%, rgba(107, 114, 128, .58) 64%, rgba(107, 114, 128, .58) 67%, transparent 67%),
+        linear-gradient(135deg, #bbf7d0, #bfdbfe);
+      box-shadow: var(--soft-shadow);
+      border: 1px solid rgba(255, 255, 255, .8);
+    }
+
+    .location-marker {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #1d4ed8;
+      font-weight: 900;
+      font-size: 12px;
+      z-index: 3;
+    }
+
+    .pulse {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 6px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--blue-500);
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, .58);
+      animation: pulse 1.7s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, .56); }
+      70% { box-shadow: 0 0 0 18px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
+    .caf-marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: var(--orange-500);
+      color: white;
+      box-shadow: 0 12px 24px rgba(194, 65, 12, .28);
+      font-size: 24px;
+    }
+
+    .caf-marker .distance {
+      position: absolute;
+      top: -19px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: white;
+      color: var(--orange-600);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 0 6px 12px rgba(17, 24, 39, .10);
+    }
+
+    .caf-marker .tooltip {
+      position: absolute;
+      bottom: -29px;
+      min-width: 92px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, .84);
+      color: white;
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .caf-marker:hover .tooltip { opacity: 1; }
+
+    .legend {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .92);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray-800);
+      display: grid;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: -1px;
+    }
+
+    .floating-list {
+      max-height: 285px;
+      overflow: auto;
+      margin-top: -82px;
+      position: relative;
+      z-index: 5;
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .qty-control {
+      display: inline-grid;
+      grid-template-columns: 36px 42px 36px;
+      align-items: center;
+      border: 1px solid var(--gray-200);
+      border-radius: 999px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .qty-control button {
+      height: 34px;
+      background: var(--gray-100);
+      font-weight: 900;
+      color: var(--gray-800);
+    }
+
+    .qty-control span { text-align: center; font-weight: 900; }
+
+    .empty {
+      padding: 40px 18px;
+      text-align: center;
+      color: var(--gray-500);
+    }
+
+    .empty .big { font-size: 58px; margin-bottom: 10px; }
+    .empty h2 { margin: 0 0 8px; color: var(--gray-800); font-size: 22px; }
+
+    .payment-option {
+      width: 100%;
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-align: left;
+      padding: 15px;
+      border-radius: 20px;
+      background: white;
+      border: 2px solid var(--gray-200);
+      color: var(--gray-900);
+    }
+
+    .payment-option.selected {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, .12);
+    }
+
+    .qr-box {
+      width: 216px;
+      height: 216px;
+      margin: 18px auto;
+      border: 8px solid var(--gray-800);
+      background: white;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+      gap: 3px;
+      padding: 10px;
+    }
+
+    .qr-cell { border-radius: 2px; background: transparent; }
+    .qr-cell.dark { background: var(--gray-900); }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      word-break: break-all;
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .avatar-choice {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      background: var(--gray-100);
+      font-size: 24px;
+      border: 2px solid transparent;
+    }
+
+    .avatar-choice.selected {
+      background: var(--orange-100);
+      border-color: var(--orange-500);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, .14);
+    }
+
+    .scan-box {
+      height: 220px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--gray-500);
+      background: rgba(255, 255, 255, .75);
+    }
+
+    .small-button {
+      width: auto;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .detail-hero {
+      text-align: center;
+      padding: 24px 16px;
+      border-radius: 28px;
+      background: white;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .detail-hero .huge { font-size: 70px; }
+    .detail-hero h2 { margin: 10px 0 6px; font-size: 28px; }
+    .detail-hero .price { font-size: 32px; }
+
+    .section-label {
+      margin: 18px 0 10px;
+      font-size: 16px;
+      color: var(--gray-800);
+    }
+
+    .sr-message {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      width: min(calc(100% - 32px), 440px);
+      padding: 13px 16px;
+      border-radius: 18px;
+      background: var(--gray-900);
+      color: white;
+      box-shadow: var(--shadow);
+      z-index: 20;
+      font-weight: 750;
+      animation: toast-in .2s ease;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @media (max-width: 360px) {
+      .screen { padding-left: 14px; padding-right: 14px; }
+      .menu-grid, .bottom-actions, .role-grid { gap: 9px; }
+      .menu-tile { min-height: 118px; padding: 13px; }
+      .title { font-size: 36px; }
+      .product-card { grid-template-columns: 1fr; }
+      .product-emoji { width: 100%; height: 62px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app"></div>
+  <script>
+    const LS_KEY = "librefood-state-v1";
+    const roles = {
+      student: { label: "Estudiante", emoji: "🎓" },
+      vendor: { label: "Vendedor", emoji: "🛒" },
+      restocker: { label: "Reabastecedor", emoji: "📦" },
+      admin: { label: "Administrador", emoji: "👨‍💼" }
+    };
+    const questions = [
+      "¿Cómo se llama tu mascota?",
+      "¿Dónde nació tu padre?",
+      "¿Cuál es tu comida favorita?",
+      "¿Cómo se llama tu mejor amigo de la infancia?",
+      "¿Cuál fue el nombre de tu primera escuela?"
+    ];
+    const avatarOptions = ["☕", "🎓", "🛒", "📦", "👨‍💼", "😊", "🌟", "🎯", "🚀", "💼"];
+    const cafeterias = [
+      { id: "c1", name: "Cafetería 1", address: "Edificio Principal, Piso 1", distance: "0.3 km", x: 25, y: 25 },
+      { id: "c2", name: "Cafetería 2", address: "Biblioteca Central", distance: "0.5 km", x: 75, y: 25 },
+      { id: "c3", name: "Cafetería 3", address: "Facultad de Ingeniería", distance: "0.7 km", x: 30, y: 75 },
+      { id: "c4", name: "Cafetería 4", address: "Zona Deportiva", distance: "1.2 km", x: 70, y: 70 }
+    ];
+    const products = [
+      { id: "p1", emoji: "🫓", name: "Arepa con queso", price: 4500, cafes: ["c1", "c4"] },
+      { id: "p2", emoji: "🥪", name: "Sandwich", price: 7000, cafes: ["c2"] },
+      { id: "p3", emoji: "🥐", name: "Croissant", price: 5000, cafes: ["c1"] },
+      { id: "p4", emoji: "🍫", name: "Brownie", price: 4500, cafes: ["c1", "c2"] },
+      { id: "p5", emoji: "🍰", name: "Chocorramo", price: 2000, cafes: ["c1", "c2", "c3", "c4"] },
+      { id: "p6", emoji: "🎂", name: "Torta de chocolate", price: 6000, cafes: ["c3"] },
+      { id: "p7", emoji: "☕", name: "Café tinto", price: 2000, cafes: ["c1", "c2", "c3", "c4"] },
+      { id: "p8", emoji: "☕", name: "Capuccino", price: 4500, cafes: ["c1"] },
+      { id: "p9", emoji: "🍫", name: "Chocolate caliente", price: 4000, cafes: ["c2"] },
+      { id: "p10", emoji: "🧋", name: "Aguapanela", price: 2500, cafes: ["c3"] },
+      { id: "p11", emoji: "🥭", name: "Jugo de mango", price: 4000, cafes: ["c1", "c3"] }
+    ];
+    const news = [
+      { emoji: "☕", title: "¡Nueva promoción!", body: "2x1 en todos los cafés hasta el viernes." },
+      { emoji: "🥗", title: "Menú saludable", body: "Nuevas opciones vegetarianas disponibles." },
+      { emoji: "⏰", title: "Horario extendido", body: "Abierto hasta las 8 PM en temporada de exámenes." },
+      { emoji: "📱", title: "Pago digital", body: "Pagos con QR en todas las cafeterías." },
+      { emoji: "🍫", title: "Nuevos productos", body: "Brownies recién horneados." }
+    ];
+    const seedUsers = [
+      { id: uid(), name: "Laura Estudiante", email: "estudiante@uni.edu", phone: "3001112233", password: "123456", role: "student", avatar: "🎓", question: questions[0], answer: "luna" },
+      { id: uid(), name: "Mateo Vendedor", email: "vendedor@uni.edu", phone: "3002223344", password: "123456", role: "vendor", avatar: "🛒", question: questions[2], answer: "arepa", cafeteriaId: "c1" },
+      { id: uid(), name: "Sofía Reabastecedora", email: "reabastecedor@uni.edu", phone: "3003334455", password: "123456", role: "restocker", avatar: "📦", question: questions[4], answer: "libertad" },
+      { id: uid(), name: "Admin LibreFood", email: "admin@uni.edu", phone: "3004445566", password: "123456", role: "admin", avatar: "👨‍💼", question: questions[1], answer: "cali" }
+    ];
+
+    let state = loadState();
+    let newsTimer = null;
+    let toastTimer = null;
+
+    function uid() {
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+        if (saved) return { ...defaultState(), ...saved, users: Array.isArray(saved.users) ? saved.users : seedUsers };
+      } catch (error) {}
+      return defaultState();
+    }
+
+    function defaultState() {
+      return {
+        screen: "welcome",
+        users: seedUsers,
+        currentUserId: null,
+        guest: false,
+        selectedCafeId: null,
+        vendorCafeId: null,
+        productCafeFilterId: null,
+        currentProductId: null,
+        cart: [],
+        preOrder: false,
+        orders: [],
+        requests: [
+          { id: uid(), cafeId: "c1", date: new Date().toLocaleString("es-CO"), status: "Pendiente", items: [
+            { productId: "p1", qty: 20 },
+            { productId: "p7", qty: 30 }
+          ] }
+        ],
+        newsIndex: 0,
+        message: ""
+      };
+    }
+
+    function save() {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    function setState(patch) {
+      state = { ...state, ...patch };
+      save();
+      render();
+    }
+
+    function currentUser() {
+      return state.users.find(user => user.id === state.currentUserId) || null;
+    }
+
+    function cafeName(id) {
+      return cafeterias.find(c => c.id === id)?.name || "Cafetería";
+    }
+
+    function cafeById(id) {
+      return cafeterias.find(c => c.id === id);
+    }
+
+    function productById(id) {
+      return products.find(p => p.id === id);
+    }
+
+    function money(value) {
+      return "$" + Number(value).toLocaleString("es-CO");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function toast(message) {
+      state.message = message;
+      render();
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        state.message = "";
+        render();
+      }, 2800);
+    }
+
+    function go(screen, patch = {}) {
+      setState({ screen, ...patch });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function backToMain() {
+      go("main");
+    }
+
+    function logout() {
+      setState({
+        screen: "welcome",
+        currentUserId: null,
+        guest: false,
+        selectedCafeId: null,
+        vendorCafeId: null,
+        productCafeFilterId: null,
+        currentProductId: null,
+        cart: [],
+        preOrder: false
+      });
+    }
+
+    function loginAsGuest() {
+      setState({ screen: "main", currentUserId: null, guest: true, cart: [], selectedCafeId: null });
+    }
+
+    function render() {
+      clearInterval(newsTimer);
+      const app = document.getElementById("app");
+      app.innerHTML = `<main class="phone">${screens[state.screen] ? screens[state.screen]() : screens.welcome()}${state.message ? `<div class="sr-message">${escapeHtml(state.message)}</div>` : ""}</main>`;
+      bindSharedEvents();
+      if (state.screen === "main") startNewsCarousel();
+    }
+
+    function bindSharedEvents() {
+      document.querySelectorAll("[data-go]").forEach(button => {
+        button.addEventListener("click", () => go(button.dataset.go));
+      });
+      document.querySelectorAll("[data-back]").forEach(button => {
+        button.addEventListener("click", () => go(button.dataset.back));
+      });
+      document.querySelectorAll("[data-toast]").forEach(button => {
+        button.addEventListener("click", () => toast(button.dataset.toast));
+      });
+    }
+
+    const screens = {
+      welcome: () => `
+        <section class="center-screen">
+          <div class="card welcome-card">
+            <div class="logo">☕</div>
+            <h1 class="title">LibreFood</h1>
+            <p class="subtitle">Cafeterías universitarias en una sola app.</p>
+            <div class="stack mt-6">
+              <button class="btn btn-primary" data-go="login">Iniciar Sesión</button>
+              <button class="btn btn-secondary" data-go="register">Crear Cuenta</button>
+              <button class="btn btn-muted" id="guestBtn">Continuar sin cuenta</button>
+            </div>
+          </div>
+        </section>
+      `,
+      login: () => `
+        <section class="screen">
+          ${topbar("welcome", "")}
+          <div class="form-card card">
+            <div class="logo" style="width:76px;height:76px;font-size:35px;">👤</div>
+            <h1 class="screen-title center">Iniciar Sesión</h1>
+            <p class="subtitle center">Ingresa a tu cuenta</p>
+            <form class="stack mt-6" id="loginForm">
+              <div><label>Correo institucional</label><input name="email" type="email" placeholder="usuario@uni.edu" required /></div>
+              <div><label>Contraseña</label><input name="password" type="password" placeholder="Tu contraseña" required /></div>
+              <button class="btn btn-primary" id="loginSubmit" disabled>Ingresar</button>
+            </form>
+            <div class="stack center mt-4">
+              <button class="link-btn" data-go="forgot">¿Olvidaste tu contraseña?</button>
+              <p class="hint">¿No tienes cuenta? <button class="link-btn orange-link" data-go="register">Crear cuenta</button></p>
+              <button class="link-btn gray-link" id="guestBtn2">Continuar sin iniciar sesión</button>
+            </div>
+          </div>
+        </section>
+      `,
+      forgot: () => forgotScreen(),
+      register: () => registerScreen(),
+      cafeSelect: () => `
+        <section class="screen">
+          ${topbar("welcome", "Selecciona tu turno")}
+          <div class="center mb-3">
+            <div class="logo" style="width:74px;height:74px;font-size:35px;">🏪</div>
+            <h1 class="screen-title">Selecciona tu turno</h1>
+            <p class="subtitle">¿En qué cafetería trabajarás hoy?</p>
+          </div>
+          <div class="stack">
+            ${cafeterias.map(cafe => cafeteriaButton(cafe, "selectVendorCafe")).join("")}
+          </div>
+        </section>
+      `,
+      main: () => mainScreen(),
+      products: () => productsScreen(),
+      productDetail: () => productDetailScreen(),
+      map: () => mapScreen(),
+      cart: () => cartScreen(),
+      checkout: () => checkoutScreen(),
+      qr: () => qrScreen(),
+      history: () => historyScreen(),
+      profile: () => profileScreen(),
+      scanQr: () => scanQrScreen(),
+      pendingOrders: () => pendingOrdersScreen(),
+      requests: () => requestsScreen(),
+      users: () => usersScreen()
+    };
+
+    function topbar(back, title, right = "") {
+      return `
+        <div class="topbar">
+          <button class="icon-btn" data-back="${back}" aria-label="Volver">←</button>
+          <h1>${escapeHtml(title)}</h1>
+          ${right || ""}
+        </div>
+      `;
+    }
+
+    function cafeteriaButton(cafe, action) {
+      return `
+        <button class="cafeteria-card" data-action="${action}" data-id="${cafe.id}">
+          <span class="round-icon">☕</span>
+          <span class="grow">
+            <strong>${cafe.name}</strong><br>
+            <span class="hint">${cafe.address}</span>
+          </span>
+          <span class="price">${cafe.distance}</span>
+        </button>
+      `;
+    }
+
+    function forgotScreen() {
+      const step = Number(state.forgotStep || 1);
+      const user = state.forgotUserId ? state.users.find(u => u.id === state.forgotUserId) : null;
+      const content = step === 1 ? `
+        <form class="stack mt-4" id="forgotEmailForm">
+          <div><label>Correo institucional</label><input name="email" type="email" placeholder="usuario@uni.edu" required /></div>
+          <button class="btn btn-blue">Continuar</button>
+        </form>
+      ` : step === 2 && user ? `
+        <div class="banner banner-blue">Pregunta de seguridad: ${escapeHtml(user.question)}</div>
+        <form class="stack" id="forgotAnswerForm">
+          <div><label>Respuesta</label><input name="answer" type="text" placeholder="Escribe tu respuesta" required /></div>
+          <button class="btn btn-blue">Verificar</button>
+        </form>
+      ` : `
+        <form class="stack mt-4" id="forgotPasswordForm">
+          <div><label>Nueva contraseña</label><input name="password" type="password" required /></div>
+          <div><label>Confirmar nueva contraseña</label><input name="confirm" type="password" required /></div>
+          <p class="error" id="forgotPasswordError" style="display:none;">Las contraseñas no coinciden.</p>
+          <button class="btn btn-green" id="resetPasswordBtn" disabled>Restablecer Contraseña</button>
+        </form>
+      `;
+      return `
+        <section class="screen">
+          ${topbar("login", "Recuperar contraseña")}
+          <div class="form-card card">
+            <h1 class="screen-title">Paso ${step} de 3</h1>
+            <p class="subtitle">${step === 1 ? "Ingresa tu correo institucional." : step === 2 ? "Responde tu pregunta de seguridad." : "Crea una nueva contraseña."}</p>
+            ${content}
+            <p class="hint mt-4">Si no puedes recuperar tu cuenta, contacta al administrador de LibreFood.</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function registerScreen() {
+      return `
+        <section class="screen">
+          ${topbar("welcome", "Crear Cuenta")}
+          <div class="form-card card">
+            <h1 class="screen-title">Registro</h1>
+            <p class="subtitle">Completa tus datos para entrar a LibreFood.</p>
+            <form class="stack mt-4" id="registerForm">
+              <div><label>Nombre completo</label><input name="name" type="text" required /></div>
+              <div><label>Correo institucional</label><input name="email" type="email" required /></div>
+              <div><label>Teléfono</label><input name="phone" type="tel" required /></div>
+              <div><label>Contraseña</label><input name="password" type="password" required /></div>
+              <div><label>Confirmar contraseña</label><input name="confirm" type="password" required /></div>
+              <p class="error" id="registerError" style="display:none;"></p>
+              <div>
+                <label>Pregunta de seguridad</label>
+                <select name="question" required>
+                  <option value="">Selecciona una pregunta</option>
+                  ${questions.map(q => `<option>${q}</option>`).join("")}
+                </select>
+              </div>
+              <div id="answerWrap" style="display:none;"><label>Respuesta a pregunta de seguridad</label><input name="answer" type="text" /></div>
+              <div>
+                <label>Tipo de usuario</label>
+                <div class="role-grid">
+                  ${Object.entries(roles).map(([key, role]) => `<button type="button" class="role-card" data-role="${key}"><span class="emoji">${role.emoji}</span><span>${role.label}</span></button>`).join("")}
+                </div>
+              </div>
+              <button class="btn btn-primary" id="registerSubmit" disabled>Crear Cuenta</button>
+            </form>
+          </div>
+        </section>
+      `;
+    }
+
+    function mainScreen() {
+      const user = currentUser();
+      const guest = state.guest || !user;
+      const role = user?.role;
+      const profile = guest ? `
+        <div class="profile-hero">
+          <div class="avatar">👤</div>
+          <div class="grow"><h2>Modo Invitado</h2><p class="subtitle" style="color:#d1d5db;">Navegando sin cuenta</p></div>
+        </div>
+      ` : `
+        <div class="profile-hero">
+          <button class="avatar" id="avatarProfile" aria-label="Abrir perfil">${user.avatar || roles[role].emoji}</button>
+          <div class="grow">
+            <h2>¡Hola, ${escapeHtml(user.name.split(" ")[0])}!</h2>
+            <span class="badge badge-orange">${roles[role].emoji} ${roles[role].label}</span>
+            ${role === "vendor" && user.cafeteriaId ? `<p class="subtitle" style="color:#fed7aa;">Turno: ${cafeName(user.cafeteriaId)}</p>` : ""}
+          </div>
+        </div>
+      `;
+      const menu = menuForRole(role, guest);
+      return `
+        <section class="screen main-screen">
+          ${profile}
+          ${newsCard()}
+          <div class="menu-grid">${menu.tiles}</div>
+          <div class="bottom-actions">${menu.actions}</div>
+        </section>
+      `;
+    }
+
+    function newsCard() {
+      const item = news[state.newsIndex % news.length];
+      return `
+        <div class="news-card">
+          <div class="news-content">
+            <div class="news-emoji">${item.emoji}</div>
+            <div><h3>${item.title}</h3><p>${item.body}</p></div>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="newsProgress"></div></div>
+          <div class="dots">
+            ${news.map((_, index) => `<button class="dot ${index === state.newsIndex ? "active" : ""}" data-news="${index}" aria-label="Noticia ${index + 1}"></button>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function menuForRole(role, guest) {
+      const tile = (screen, icon, title, desc, klass) => `<button class="menu-tile ${klass}" data-go="${screen}"><span class="tile-icon">${icon}</span><span><strong>${title}</strong><span>${desc}</span></span></button>`;
+      if (guest) return {
+        tiles: tile("products", "🛍️", "PRODUCTOS", "Ver catálogo completo", "grad-products") + tile("map", "🗺️", "MAPA", "Ver ubicaciones de cafeterías", "grad-map"),
+        actions: `<button class="btn btn-blue" data-go="login">Iniciar Sesión</button><button class="btn btn-green" data-go="register">Registrarse</button>`
+      };
+      if (role === "student") return {
+        tiles: tile("products", "🛍️", "PRODUCTOS", "Comprar productos", "grad-products") + tile("map", "🗺️", "MAPA", "Mapa interactivo", "grad-map") + tile("history", "🧾", "HISTORIAL", "Ver pedidos pasados", "grad-history"),
+        actions: `<button class="btn btn-dark" data-go="profile">Perfil</button><button class="btn btn-red" id="logoutBtn">Salir</button>`
+      };
+      if (role === "vendor") return {
+        tiles: tile("products", "🛍️", "PRODUCTOS", "Ver productos de su cafetería", "grad-products") + tile("scanQr", "📱", "REGISTRAR QR", "Escanear códigos QR", "grad-blue") + tile("pendingOrders", "⏱️", "PEDIDOS", "Ver pedidos pendientes", "grad-purple") + tile("history", "🧾", "VENTAS", "Historial de ventas", "grad-history"),
+        actions: `<button class="btn btn-dark" data-go="profile">Perfil</button><button class="btn btn-red" id="logoutBtn">Salir</button>`
+      };
+      if (role === "restocker") return {
+        tiles: tile("map", "🗺️", "MAPA", "Ubicaciones de cafeterías", "grad-map") + tile("products", "📦", "INVENTARIO", "Ver productos disponibles", "grad-products") + tile("requests", "✅", "SOLICITUDES", "Solicitudes de reabastecimiento", "grad-green"),
+        actions: `<button class="btn btn-dark" data-go="profile">Perfil</button><button class="btn btn-red" id="logoutBtn">Salir</button>`
+      };
+      return {
+        tiles: tile("products", "🛍️", "PRODUCTOS", "Ver todos los productos", "grad-products") + tile("map", "🗺️", "MAPA", "Mapa de cafeterías", "grad-map") + tile("history", "🧾", "HISTORIAL", "Ver todos los pedidos", "grad-history") + tile("users", "👥", "GESTIONAR USUARIOS", "Administrar cuentas", "grad-admin"),
+        actions: `<button class="btn btn-dark" data-go="profile">Perfil</button><button class="btn btn-red" id="logoutBtn">Salir</button>`
+      };
+    }
+
+    function productsScreen() {
+      const user = currentUser();
+      const role = user?.role;
+      const guest = state.guest || !user;
+      const vendorCafeId = role === "vendor" ? user.cafeteriaId : null;
+      const activeCafeId = vendorCafeId || state.productCafeFilterId || state.selectedCafeId;
+      const filtered = activeCafeId ? products.filter(product => product.cafes.includes(activeCafeId)) : products;
+      const title = vendorCafeId ? cafeName(vendorCafeId) : activeCafeId ? cafeName(activeCafeId) : "Todos los Productos";
+      const cartCount = state.cart.reduce((total, item) => total + item.qty, 0);
+      const right = role === "student" ? `<button class="icon-btn" data-go="cart" aria-label="Carrito">🛒${cartCount ? `<span class="badge badge-red" style="position:absolute;margin-left:28px;margin-top:-30px;">${cartCount}</span>` : ""}</button>` : "";
+      return `
+        <section class="screen">
+          ${topbar("main", title, right)}
+          ${activeCafeId && role === "student" ? `<div class="banner banner-orange">Filtro activo: ${cafeName(activeCafeId)} <button class="link-btn orange-link" id="clearCafeFilter">Ver todos los productos</button></div>` : ""}
+          ${vendorCafeId ? `<div class="banner banner-blue">Productos de ${cafeName(vendorCafeId)}</div>` : ""}
+          <div class="stack">
+            ${filtered.map(product => productCard(product, role, guest, activeCafeId)).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function productCard(product, role, guest, activeCafeId) {
+      const cafeChips = product.cafes.map(id => `<span class="chip">${cafeName(id)}</span>`).join("");
+      let action = "";
+      if (role === "student") {
+        if (activeCafeId && product.cafes.includes(activeCafeId)) {
+          action = `<button class="btn btn-primary small-button" data-add="${product.id}" data-cafe="${activeCafeId}">Agregar al carrito</button>`;
+        } else {
+          action = `
+            <div class="row wrap">
+              <select data-select-cafe="${product.id}" aria-label="Seleccionar cafetería">
+                <option value="">Seleccionar cafetería</option>
+                ${product.cafes.map(id => {
+                  const cafe = cafeById(id);
+                  return `<option value="${id}">${cafe.name} - ${cafe.distance}</option>`;
+                }).join("")}
+              </select>
+              <button class="btn btn-primary small-button" data-add-selected="${product.id}">Agregar</button>
+            </div>
+            <button class="link-btn" data-detail="${product.id}">Disponible en ${product.cafes.length} cafetería${product.cafes.length > 1 ? "s" : ""}</button>
+          `;
+        }
+      } else if (guest) {
+        action = `<button class="btn btn-blue small-button" data-go="login">Inicia sesión para comprar</button>`;
+      } else {
+        action = `<span class="badge badge-gray">Modo visualización</span>`;
+      }
+      return `
+        <article class="product-card">
+          <div class="product-emoji">${product.emoji}</div>
+          <div>
+            <div class="row space-between"><h3>${product.name}</h3><strong class="price">${money(product.price)}</strong></div>
+            <div class="chips">${cafeChips}</div>
+            ${action}
+          </div>
+        </article>
+      `;
+    }
+
+    function productDetailScreen() {
+      const product = productById(state.currentProductId) || products[0];
+      const user = currentUser();
+      const role = user?.role;
+      const guest = state.guest || !user;
+      return `
+        <section class="screen">
+          ${topbar("products", "Detalle")}
+          <div class="detail-hero">
+            <div class="huge">${product.emoji}</div>
+            <h2>${product.name}</h2>
+            <div class="price">${money(product.price)}</div>
+          </div>
+          <h3 class="section-label">🗺️ Cafeterías disponibles</h3>
+          <div class="stack">
+            ${product.cafes.map(id => {
+              const cafe = cafeById(id);
+              return `
+                <div class="cafeteria-card">
+                  <span class="round-icon">☕</span>
+                  <span class="grow"><strong>${cafe.name}</strong><br><span class="hint">${cafe.address}</span><br><span class="badge badge-blue">🧭 ${cafe.distance}</span></span>
+                  ${role === "student" ? `<button class="btn btn-primary small-button" data-add="${product.id}" data-cafe="${cafe.id}">Agregar desde ${cafe.name}</button>` : ""}
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="stack mt-4">
+            <button class="btn btn-blue" data-go="map">Ver ubicaciones en el mapa</button>
+            ${guest ? `<button class="btn btn-primary" data-go="login">Inicia sesión para comprar</button>` : role !== "student" ? `<span class="badge badge-gray">Solo visualización</span>` : ""}
+          </div>
+        </section>
+      `;
+    }
+
+    function mapScreen() {
+      const user = currentUser();
+      const name = state.guest || !user ? "Invitado" : user.name.split(" ")[0];
+      return `
+        <section class="screen">
+          ${topbar("main", "Mapa")}
+          <div class="map-box">
+            <div class="legend"><span><i class="legend-dot" style="background:#3b82f6;"></i>Tu ubicación</span><span><i class="legend-dot" style="background:#f97316;"></i>Cafeterías</span></div>
+            <div class="location-marker"><div class="pulse">🧭</div>${escapeHtml(name)}</div>
+            ${cafeterias.map(cafe => `<button class="caf-marker" style="left:${cafe.x}%;top:${cafe.y}%;" data-map-cafe="${cafe.id}"><span class="distance">${cafe.distance}</span>☕<span class="tooltip">${cafe.name}</span></button>`).join("")}
+          </div>
+          <div class="card floating-list">
+            <h3 style="margin:0 0 12px;">Cafeterías cercanas</h3>
+            <div class="stack">
+              ${cafeterias.map(cafe => `
+                <button class="cafeteria-card" data-map-cafe="${cafe.id}">
+                  <span class="round-icon">☕</span>
+                  <span class="grow"><strong>${cafe.name}</strong><br><span class="hint">${cafe.address}</span><br><span class="hint">Toca para ver productos</span></span>
+                  <span class="price">${cafe.distance}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function cartScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "student") return unavailable("Carrito no disponible", "El carrito solo está disponible para estudiantes autenticados.", "login");
+      const total = cartTotal();
+      return `
+        <section class="screen">
+          ${topbar("products", "Carrito")}
+          ${state.cart.length === 0 ? `
+            <div class="card empty"><div class="big">🛒</div><h2>Tu carrito está vacío</h2><button class="btn btn-primary mt-4" data-go="products">Ver productos</button></div>
+          ` : `
+            <div class="stack">
+              ${state.cart.map(item => cartItem(item)).join("")}
+            </div>
+            <label class="row mt-4 card" style="padding:14px;border-radius:18px;"><input id="preOrderCheck" type="checkbox" style="width:22px;min-height:22px;" ${state.preOrder ? "checked" : ""}/> ⏰ Pre-ordenar (tenlo listo cuando llegues)</label>
+            <div class="card mt-4" style="padding:18px;border-radius:22px;">
+              <div class="row space-between"><strong>Total:</strong><strong class="price" style="font-size:28px;">${money(total)}</strong></div>
+              <button class="btn btn-primary mt-4" data-go="checkout">🛒 Proceder al pago</button>
+            </div>
+          `}
+        </section>
+      `;
+    }
+
+    function cartItem(item) {
+      const product = productById(item.productId);
+      return `
+        <article class="product-card">
+          <div class="product-emoji">${product.emoji}</div>
+          <div>
+            <div class="row space-between"><h3>${product.name}</h3><button class="small-button btn-red" data-remove-cart="${item.id}">X</button></div>
+            <p class="hint">${cafeName(item.cafeId)}</p>
+            <div class="row space-between wrap">
+              <strong class="price">${money(product.price)}</strong>
+              <div class="qty-control"><button data-qty="${item.id}" data-delta="-1">-</button><span>${item.qty}</span><button data-qty="${item.id}" data-delta="1">+</button></div>
+            </div>
+            <p class="hint">Subtotal: <strong>${money(product.price * item.qty)}</strong></p>
+          </div>
+        </article>
+      `;
+    }
+
+    function checkoutScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "student") return unavailable("Checkout no disponible", "Debes iniciar sesión como estudiante.", "login");
+      if (!state.cart.length) return unavailable("No hay productos", "Agrega productos antes de pagar.", "products");
+      const method = state.paymentMethod || "";
+      return `
+        <section class="screen">
+          ${topbar("cart", "Checkout")}
+          <div class="card" style="padding:16px;border-radius:24px;">
+            <h3 style="margin-top:0;">Resumen del pedido</h3>
+            <div class="stack">
+              ${state.cart.map(item => {
+                const product = productById(item.productId);
+                return `<div class="row space-between"><span>${product.emoji} ${product.name} x${item.qty}</span><strong>${money(product.price * item.qty)}</strong></div>`;
+              }).join("")}
+            </div>
+            ${state.preOrder ? `<div class="banner banner-blue mt-4">Pre-orden activada - Tu pedido estará listo cuando llegues</div>` : ""}
+            <div class="row space-between mt-4"><strong>Total</strong><strong class="price" style="font-size:28px;">${money(cartTotal())}</strong></div>
+          </div>
+          <div class="stack mt-4">
+            <button class="payment-option ${method === "cash" ? "selected" : ""}" data-payment="cash"><span class="round-icon">💳</span><span class="grow"><strong>Pago en efectivo</strong><br><span class="hint">Paga al recoger tu pedido</span></span><span>${method === "cash" ? "✓" : ""}</span></button>
+            <button class="payment-option ${method === "online" ? "selected" : ""}" data-payment="online"><span class="round-icon">📱</span><span class="grow"><strong>Pago en línea</strong><br><span class="hint">Se generará un código QR</span></span><span>${method === "online" ? "✓" : ""}</span></button>
+            <button class="btn btn-green" id="confirmOrder" ${method ? "" : "disabled"}>Confirmar pedido</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function qrScreen() {
+      const code = state.lastQr || "ORDER-DEMO-LibreFood";
+      return `
+        <section class="screen">
+          <div class="card center" style="padding:28px 18px;border-radius:30px;">
+            <div class="logo" style="background:linear-gradient(135deg,#16a34a,#22c55e);">✓</div>
+            <h1 class="screen-title">¡Pedido Confirmado!</h1>
+            <p class="subtitle">${state.preOrder ? "Tu pre-orden está lista. Muestra este QR al llegar." : "Muestra este código QR en la cafetería para pagar y recoger tu pedido."}</p>
+            <div class="qr-box">${qrCells(code)}</div>
+            <p class="hint">Código de pedido:</p>
+            <p class="mono"><strong>${escapeHtml(code)}</strong></p>
+            <div class="stack mt-4">
+              <button class="btn btn-primary" data-go="main">Volver al inicio</button>
+              <button class="btn btn-muted" data-go="history">Ver historial</button>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function historyScreen() {
+      const user = currentUser();
+      if (!user) return unavailable("Historial no disponible", "Inicia sesión para ver tu historial.", "login");
+      const title = user.role === "vendor" ? "Historial de Ventas" : "Historial de Pedidos";
+      let orders = state.orders;
+      if (user.role === "student") orders = orders.filter(o => o.userId === user.id);
+      if (user.role === "vendor") orders = orders.filter(o => o.items.some(item => item.cafeId === user.cafeteriaId));
+      return `
+        <section class="screen">
+          ${topbar("main", title)}
+          ${orders.length ? `<div class="stack">${orders.map(orderCard).join("")}</div>` : `<div class="card empty"><div class="big">🧾</div><h2>${user.role === "vendor" ? "No hay ventas registradas" : "No tienes pedidos anteriores"}</h2></div>`}
+        </section>
+      `;
+    }
+
+    function orderCard(order) {
+      const statusClass = order.status === "Completado" ? "badge-green" : order.status === "Pre-orden confirmada" ? "badge-blue" : "badge-yellow";
+      return `
+        <article class="order-card">
+          <div class="row space-between wrap"><h3>Pedido ${order.number}</h3><span class="badge ${statusClass}">${order.status}</span></div>
+          <p class="hint">${order.date}</p>
+          <div class="stack mt-3">
+            ${order.items.map(item => {
+              const product = productById(item.productId);
+              return `<div class="row space-between"><span>${product.emoji} ${product.name} x${item.qty}</span><strong>${money(product.price * item.qty)}</strong></div>`;
+            }).join("")}
+          </div>
+          <div class="chips">
+            <span class="chip">${[...new Set(order.items.map(item => cafeName(item.cafeId)))].join(", ")}</span>
+            <span class="badge badge-gray">${order.payment === "cash" ? "Efectivo" : "En línea"}</span>
+            ${order.preOrder ? `<span class="badge badge-orange">Pre-orden</span>` : ""}
+          </div>
+          <div class="row space-between"><strong>Total</strong><strong class="price" style="font-size:22px;">${money(order.total)}</strong></div>
+          ${order.qr ? `<button class="btn btn-muted mt-3" data-show-qr="${order.qr}">Ver código QR</button>` : ""}
+        </article>
+      `;
+    }
+
+    function profileScreen() {
+      const user = currentUser();
+      if (!user) return unavailable("Perfil no disponible", "Inicia sesión para ver tu perfil.", "login");
+      const editing = !!state.profileEditing;
+      return `
+        <section class="screen">
+          ${topbar("main", "Mi Perfil", `<button class="icon-btn" id="toggleEdit" aria-label="Editar perfil">⚙️</button>`)}
+          <div class="card center" style="padding:20px;border-radius:28px;">
+            <button class="avatar" id="toggleAvatars" style="width:96px;height:96px;font-size:46px;">${user.avatar || roles[user.role].emoji}</button>
+            <p class="hint">Toca para cambiar avatar</p>
+            <div class="avatar-grid mt-3" id="avatarGrid" style="display:${state.showAvatars ? "grid" : "none"};">
+              ${avatarOptions.map(avatar => `<button class="avatar-choice ${avatar === user.avatar ? "selected" : ""}" data-avatar="${avatar}">${avatar}</button>`).join("")}
+            </div>
+            <h2>${escapeHtml(user.name)}</h2>
+            <span class="badge badge-orange">${roles[user.role].emoji} ${roles[user.role].label}</span>
+          </div>
+          <div class="card mt-4" style="padding:16px;border-radius:24px;">
+            ${editing ? `
+              <form class="stack" id="profileForm">
+                <div><label>Nombre completo</label><input name="name" value="${escapeHtml(user.name)}" required /></div>
+                <div><label>Correo electrónico</label><input name="email" type="email" value="${escapeHtml(user.email)}" required /></div>
+                <div><label>Teléfono</label><input name="phone" value="${escapeHtml(user.phone || "")}" required /></div>
+                <div class="bottom-actions"><button class="btn btn-green">✓ Guardar</button><button type="button" class="btn btn-muted" id="cancelEdit">✕ Cancelar</button></div>
+              </form>
+            ` : `
+              <div class="stack">
+                <p><strong>Nombre:</strong><br>${escapeHtml(user.name)}</p>
+                <p><strong>Correo:</strong><br>${escapeHtml(user.email)}</p>
+                <p><strong>Teléfono:</strong><br>${escapeHtml(user.phone || "No registrado")}</p>
+              </div>
+            `}
+          </div>
+          <div class="stack mt-4">
+            <button class="btn btn-secondary" data-go="history">🧾 Ver historial de pedidos</button>
+            <button class="btn btn-red" id="logoutBtn">Cerrar sesión</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function scanQrScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "vendor") return unavailable("Registrar QR no disponible", "Esta pantalla es solo para vendedores.", "main");
+      return `
+        <section class="screen">
+          ${topbar("main", "Registrar QR")}
+          <div class="scan-box"><div><div style="font-size:58px;">📱</div><strong>Escanear código QR del cliente</strong></div></div>
+          <form class="stack mt-4" id="scanForm">
+            <div><label>O ingresar código manualmente:</label><input name="code" placeholder="ORDER-123456-Usuario" required /></div>
+            <button class="btn btn-green">✓ Confirmar Pago</button>
+          </form>
+          <div class="banner banner-blue mt-4">Solicita al cliente el QR generado al confirmar su pedido y confirma el pago desde esta pantalla.</div>
+        </section>
+      `;
+    }
+
+    function pendingOrdersScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "vendor") return unavailable("Pedidos no disponibles", "Esta pantalla es solo para vendedores.", "main");
+      const orders = state.orders.filter(order => ["Pre-orden confirmada", "Pendiente", "En preparación"].includes(order.status) && order.items.some(item => item.cafeId === user.cafeteriaId));
+      return `
+        <section class="screen">
+          ${topbar("main", "Pedidos Pendientes")}
+          ${orders.length ? `<div class="stack">${orders.map(order => pendingOrderCard(order)).join("")}</div>` : `<div class="card empty"><div class="big">⏱️</div><h2>No hay pedidos pendientes</h2></div>`}
+        </section>
+      `;
+    }
+
+    function pendingOrderCard(order) {
+      return `
+        <article class="order-card">
+          <div class="row space-between wrap"><h3>Pedido ${order.number}</h3><span class="badge badge-yellow">${order.status}</span>${order.preOrder ? `<span class="badge badge-orange">Pre-orden</span>` : ""}</div>
+          <p class="hint">${order.date} · Cliente: ${escapeHtml(order.customerName || "Cliente")}</p>
+          <div class="stack mt-3" style="background:#f3f4f6;padding:12px;border-radius:16px;">
+            ${order.items.map(item => {
+              const product = productById(item.productId);
+              return `<div class="row space-between"><span>${product.emoji} ${product.name} x${item.qty}</span><strong>${money(product.price * item.qty)}</strong></div>`;
+            }).join("")}
+          </div>
+          <div class="row space-between mt-3"><strong>Total</strong><strong class="price" style="font-size:24px;">${money(order.total)}</strong></div>
+          <div class="bottom-actions"><button class="btn btn-blue" data-order-status="${order.id}" data-status="En preparación">En preparación</button><button class="btn btn-green" data-order-status="${order.id}" data-status="Completado">Completar</button></div>
+        </article>
+      `;
+    }
+
+    function requestsScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "restocker") return unavailable("Solicitudes no disponibles", "Esta pantalla es solo para reabastecedores.", "main");
+      return `
+        <section class="screen">
+          ${topbar("main", "Solicitudes")}
+          ${state.requests.length ? `<div class="stack">${state.requests.map(requestCard).join("")}</div>` : `<div class="card empty"><div class="big">＋</div><h2>No hay solicitudes pendientes</h2></div>`}
+        </section>
+      `;
+    }
+
+    function requestCard(req) {
+      const cafe = cafeById(req.cafeId);
+      return `
+        <article class="request-card">
+          <div class="row space-between wrap"><div><h3>${cafe.name}</h3><p class="hint">${cafe.address}<br>${req.date}</p></div><span class="badge ${req.status === "Completado" ? "badge-green" : "badge-yellow"}">${req.status}</span></div>
+          <div class="stack mt-3" style="background:#f3f4f6;padding:12px;border-radius:16px;">
+            ${req.items.map(item => {
+              const product = productById(item.productId);
+              return `<div class="row space-between"><span>${product.emoji} ${product.name}</span><strong class="price">${item.qty} unidades</strong></div>`;
+            }).join("")}
+          </div>
+          ${req.status === "Pendiente" ? `<button class="btn btn-green mt-3" data-complete-request="${req.id}">✓ Marcar como completado</button>` : ""}
+        </article>
+      `;
+    }
+
+    function usersScreen() {
+      const user = currentUser();
+      if (!user || user.role !== "admin") return unavailable("Gestión no disponible", "Esta pantalla es solo para administradores.", "main");
+      return `
+        <section class="screen">
+          ${topbar("main", "Gestionar Usuarios")}
+          ${state.users.length ? `<div class="stack">${state.users.map(appUser => `
+            <article class="user-card">
+              <div class="row">
+                <span class="avatar" style="width:56px;height:56px;font-size:27px;">${appUser.avatar || roles[appUser.role].emoji}</span>
+                <span class="grow"><h3>${escapeHtml(appUser.name)}</h3><span class="hint">${escapeHtml(appUser.email)}</span><br><span class="badge badge-orange">${roles[appUser.role].emoji} ${roles[appUser.role].label}</span><p class="hint">${escapeHtml(appUser.phone || "No registrado")}</p></span>
+              </div>
+              <div class="bottom-actions"><button class="btn btn-blue" data-toast="Funcionalidad de edición lista como placeholder.">Editar</button><button class="btn btn-red" data-delete-user="${appUser.id}">Eliminar</button></div>
+            </article>
+          `).join("")}</div>` : `<div class="card empty"><div class="big">👤</div><h2>No hay usuarios registrados</h2></div>`}
+        </section>
+      `;
+    }
+
+    function unavailable(title, body, target) {
+      return `
+        <section class="screen">
+          ${topbar("main", title)}
+          <div class="card empty"><div class="big">🔒</div><h2>${title}</h2><p>${body}</p><button class="btn btn-primary mt-4" data-go="${target}">${target === "login" ? "Iniciar Sesión" : "Volver"}</button></div>
+        </section>
+      `;
+    }
+
+    function cartTotal() {
+      return state.cart.reduce((sum, item) => sum + productById(item.productId).price * item.qty, 0);
+    }
+
+    function qrCells(code) {
+      let hash = 0;
+      for (let i = 0; i < code.length; i++) hash = (hash * 31 + code.charCodeAt(i)) >>> 0;
+      return Array.from({ length: 81 }, (_, i) => {
+        const finder = (i < 21 && i % 9 < 3) || (i < 27 && i % 9 > 5) || (i > 53 && i % 9 < 3);
+        const dark = finder || ((hash >> (i % 24)) & 1) === 1 || (i * 7 + hash) % 11 < 4;
+        return `<span class="qr-cell ${dark ? "dark" : ""}"></span>`;
+      }).join("");
+    }
+
+    function addToCart(productId, cafeId) {
+      if (!cafeId) {
+        toast("Selecciona una cafetería para agregar el producto.");
+        return;
+      }
+      const existing = state.cart.find(item => item.productId === productId && item.cafeId === cafeId);
+      const cart = existing
+        ? state.cart.map(item => item.id === existing.id ? { ...item, qty: item.qty + 1 } : item)
+        : [...state.cart, { id: uid(), productId, cafeId, qty: 1 }];
+      setState({ cart });
+      toast("Producto agregado al carrito.");
+    }
+
+    function startNewsCarousel() {
+      let width = 0;
+      const fill = document.getElementById("newsProgress");
+      newsTimer = setInterval(() => {
+        width += 1;
+        if (fill) fill.style.width = width + "%";
+        if (width >= 100) {
+          width = 0;
+          state.newsIndex = (state.newsIndex + 1) % news.length;
+          save();
+          render();
+        }
+      }, 100);
+    }
+
+    document.addEventListener("click", event => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      if (target.id === "guestBtn" || target.id === "guestBtn2") loginAsGuest();
+      if (target.id === "logoutBtn") logout();
+      if (target.id === "avatarProfile") go("profile");
+      if (target.dataset.news) setState({ newsIndex: Number(target.dataset.news) });
+      if (target.dataset.action === "selectVendorCafe") {
+        const user = currentUser();
+        const users = state.users.map(item => item.id === user.id ? { ...item, cafeteriaId: target.dataset.id } : item);
+        setState({ users, vendorCafeId: target.dataset.id, screen: "main" });
+      }
+      if (target.id === "clearCafeFilter") setState({ productCafeFilterId: null, selectedCafeId: null });
+      if (target.dataset.detail) go("productDetail", { currentProductId: target.dataset.detail });
+      if (target.dataset.add) addToCart(target.dataset.add, target.dataset.cafe);
+      if (target.dataset.addSelected) {
+        const select = document.querySelector(`[data-select-cafe="${target.dataset.addSelected}"]`);
+        addToCart(target.dataset.addSelected, select?.value);
+      }
+      if (target.dataset.mapCafe) go("products", { productCafeFilterId: target.dataset.mapCafe, selectedCafeId: target.dataset.mapCafe });
+      if (target.dataset.removeCart) setState({ cart: state.cart.filter(item => item.id !== target.dataset.removeCart) });
+      if (target.dataset.qty) {
+        const delta = Number(target.dataset.delta);
+        const cart = state.cart.map(item => item.id === target.dataset.qty ? { ...item, qty: Math.max(1, item.qty + delta) } : item);
+        setState({ cart });
+      }
+      if (target.dataset.payment) setState({ paymentMethod: target.dataset.payment });
+      if (target.id === "confirmOrder") confirmOrder();
+      if (target.dataset.showQr) go("qr", { lastQr: target.dataset.showQr });
+      if (target.id === "toggleEdit") setState({ profileEditing: !state.profileEditing });
+      if (target.id === "cancelEdit") setState({ profileEditing: false });
+      if (target.id === "toggleAvatars") setState({ showAvatars: !state.showAvatars });
+      if (target.dataset.avatar) updateCurrentUser({ avatar: target.dataset.avatar }, "Avatar actualizado.");
+      if (target.dataset.orderStatus) {
+        const orders = state.orders.map(order => order.id === target.dataset.orderStatus ? { ...order, status: target.dataset.status } : order);
+        setState({ orders });
+        toast("Estado del pedido actualizado.");
+      }
+      if (target.dataset.completeRequest) {
+        const requests = state.requests.map(req => req.id === target.dataset.completeRequest ? { ...req, status: "Completado" } : req);
+        setState({ requests });
+        toast("Solicitud marcada como completada.");
+      }
+      if (target.dataset.deleteUser) {
+        const user = state.users.find(u => u.id === target.dataset.deleteUser);
+        if (user && confirm(`¿Eliminar a ${user.name}?`)) setState({ users: state.users.filter(u => u.id !== user.id) });
+      }
+    });
+
+    document.addEventListener("input", event => {
+      if (event.target.closest("#loginForm")) {
+        const form = document.getElementById("loginForm");
+        document.getElementById("loginSubmit").disabled = !(form.email.value.trim() && form.password.value.trim());
+      }
+      if (event.target.closest("#registerForm")) validateRegisterForm();
+      if (event.target.closest("#forgotPasswordForm")) {
+        const form = document.getElementById("forgotPasswordForm");
+        const ok = form.password.value && form.password.value === form.confirm.value;
+        document.getElementById("forgotPasswordError").style.display = form.confirm.value && !ok ? "block" : "none";
+        document.getElementById("resetPasswordBtn").disabled = !ok;
+      }
+    });
+
+    document.addEventListener("change", event => {
+      if (event.target.closest("#registerForm")) validateRegisterForm();
+      if (event.target.id === "preOrderCheck") setState({ preOrder: event.target.checked });
+      if (event.target.name === "question") {
+        document.getElementById("answerWrap").style.display = event.target.value ? "block" : "none";
+      }
+    });
+
+    document.addEventListener("submit", event => {
+      event.preventDefault();
+      if (event.target.id === "loginForm") submitLogin(event.target);
+      if (event.target.id === "registerForm") submitRegister(event.target);
+      if (event.target.id === "forgotEmailForm") submitForgotEmail(event.target);
+      if (event.target.id === "forgotAnswerForm") submitForgotAnswer(event.target);
+      if (event.target.id === "forgotPasswordForm") submitForgotPassword(event.target);
+      if (event.target.id === "profileForm") submitProfile(event.target);
+      if (event.target.id === "scanForm") {
+        toast("Pago confirmado correctamente.");
+        event.target.reset();
+      }
+    });
+
+    function submitLogin(form) {
+      const email = form.email.value.trim().toLowerCase();
+      const password = form.password.value;
+      const user = state.users.find(item => item.email.toLowerCase() === email);
+      if (!user) return toast("El usuario no existe.");
+      if (user.password !== password) return toast("La contraseña es incorrecta.");
+      const next = user.role === "vendor" && !user.cafeteriaId ? "cafeSelect" : "main";
+      setState({ currentUserId: user.id, guest: false, screen: next, vendorCafeId: user.cafeteriaId || null });
+    }
+
+    function validateRegisterForm() {
+      const form = document.getElementById("registerForm");
+      if (!form) return;
+      const selectedRole = form.dataset.role || "";
+      const values = ["name", "email", "phone", "password", "confirm", "question"].map(name => form[name].value.trim());
+      const hasAnswer = form.answer.value.trim();
+      const match = form.password.value === form.confirm.value;
+      const error = document.getElementById("registerError");
+      if (form.confirm.value && !match) {
+        error.textContent = "Las contraseñas deben coincidir.";
+        error.style.display = "block";
+      } else {
+        error.style.display = "none";
+      }
+      document.getElementById("registerSubmit").disabled = !(values.every(Boolean) && hasAnswer && selectedRole && match);
+    }
+
+    document.addEventListener("click", event => {
+      const roleButton = event.target.closest("[data-role]");
+      if (!roleButton) return;
+      const form = document.getElementById("registerForm");
+      form.dataset.role = roleButton.dataset.role;
+      document.querySelectorAll(".role-card").forEach(button => button.classList.toggle("selected", button === roleButton));
+      validateRegisterForm();
+    });
+
+    function submitRegister(form) {
+      const email = form.email.value.trim().toLowerCase();
+      if (state.users.some(user => user.email.toLowerCase() === email)) return toast("Ese correo ya está registrado.");
+      if (form.password.value !== form.confirm.value) return toast("Las contraseñas deben coincidir.");
+      const role = form.dataset.role;
+      const user = {
+        id: uid(),
+        name: form.name.value.trim(),
+        email,
+        phone: form.phone.value.trim(),
+        password: form.password.value,
+        role,
+        avatar: roles[role].emoji,
+        question: form.question.value,
+        answer: form.answer.value.trim()
+      };
+      const users = [...state.users, user];
+      setState({ users, currentUserId: user.id, guest: false, screen: role === "vendor" ? "cafeSelect" : "main" });
+    }
+
+    function submitForgotEmail(form) {
+      const user = state.users.find(item => item.email.toLowerCase() === form.email.value.trim().toLowerCase());
+      if (!user) return toast("Correo no encontrado en el sistema.");
+      setState({ forgotStep: 2, forgotUserId: user.id });
+    }
+
+    function submitForgotAnswer(form) {
+      const user = state.users.find(item => item.id === state.forgotUserId);
+      if (!user || user.answer.trim().toLowerCase() !== form.answer.value.trim().toLowerCase()) {
+        toast("Respuesta incorrecta. Contacta al administrador.");
+        return go("login", { forgotStep: 1, forgotUserId: null });
+      }
+      setState({ forgotStep: 3 });
+    }
+
+    function submitForgotPassword(form) {
+      if (form.password.value !== form.confirm.value) return toast("Las contraseñas no coinciden.");
+      const users = state.users.map(user => user.id === state.forgotUserId ? { ...user, password: form.password.value } : user);
+      setState({ users, screen: "login", forgotStep: 1, forgotUserId: null });
+      toast("Contraseña restablecida. Ahora puedes iniciar sesión.");
+    }
+
+    function submitProfile(form) {
+      updateCurrentUser({
+        name: form.name.value.trim(),
+        email: form.email.value.trim().toLowerCase(),
+        phone: form.phone.value.trim()
+      }, "Perfil actualizado.");
+      state.profileEditing = false;
+      save();
+      render();
+    }
+
+    function updateCurrentUser(patch, message) {
+      const user = currentUser();
+      const users = state.users.map(item => item.id === user.id ? { ...item, ...patch } : item);
+      setState({ users });
+      toast(message);
+    }
+
+    function confirmOrder() {
+      const user = currentUser();
+      const qr = state.paymentMethod === "online" ? `ORDER-${Date.now()}-${user.name.replace(/\s+/g, "")}` : "";
+      const order = {
+        id: uid(),
+        number: "#" + String(state.orders.length + 1).padStart(4, "0"),
+        date: new Date().toLocaleString("es-CO"),
+        status: state.preOrder ? "Pre-orden confirmada" : "Pendiente",
+        userId: user.id,
+        customerName: user.name,
+        items: state.cart,
+        total: cartTotal(),
+        payment: state.paymentMethod,
+        preOrder: state.preOrder,
+        qr
+      };
+      if (state.paymentMethod === "cash") {
+        setState({ orders: [order, ...state.orders], cart: [], preOrder: false, paymentMethod: "", screen: "main" });
+        toast("Pedido confirmado. Paga al recoger tu pedido.");
+      } else {
+        setState({ orders: [order, ...state.orders], cart: [], paymentMethod: "", lastQr: qr, screen: "qr" });
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
